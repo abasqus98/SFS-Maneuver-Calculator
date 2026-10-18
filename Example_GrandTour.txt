@@ -1,0 +1,239 @@
+{
+    "maneuver_default": {
+        "maneuver_type0": {
+            "type": 0,
+            "DV": 100,
+	    "margin": "1"
+        },
+        "maneuver_type1_justburn": {
+            "type": 1,
+            "b": "body1",
+            "A1": "LO/100/100h",
+            "A21": "LO/100/100h",
+            "A22": "LO/100/100h",
+            "margin": "1"
+        },
+        "maneuver_type2_escape2flyby": {
+            "type": 2,
+            "b1": "body1",
+            "A1": "LO/100/100h",
+            "P1": "LO/100/100h",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "body2",
+	    "A2": "LO/100/100h",
+	    "P2": "LO/100/100h",
+	    "argP2": "0",
+	    "scenario": "max/min"
+        },
+        "maneuver_type3_flyby2capture": {
+            "type": 3,
+            "b1": "body1",
+	    "A1": "LO/100/100h",
+	    "P1": "LO/100/100h",
+	    "argP1": "0",
+            "b2": "body2",
+            "A2": "LO/100/100h",
+            "P2": "LO/100/100h",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "max/min"
+        },
+        "maneuver_type4_fullhohmann": {
+            "type": 4,
+            "b1": "body1",
+            "A1": "LO/100/100h",
+            "P1": "LO/100/100h",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "body2",
+            "A2": "LO/100/100h",
+            "P2": "LO/100/100h",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "max/min"
+        }
+    },
+    "maneuver": {
+	"Earth LO to Venus Flyby": {
+            "type": 2,
+            "b1": "Earth",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "+50",
+            "b2": "Venus",
+	    "A2": "LO",
+	    "P2": "LO",
+	    "argP2": "0",
+	    "scenario": "min"
+        },
+	"Post-Venusian Aerobraking correction": {
+            "type": 1,
+            "b": "Venus",
+            "A1": "43000h",
+            "A21": "0h",
+            "A22": "43000h",
+	    "margin": "1"
+	},
+	"Venus escape": {
+            "type": 2,
+            "b1": "Venus",
+            "A1": "43000h",
+            "P1": "43000h",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Sun",
+	    "A2": "5450000000",
+	    "P2": "5350000000",
+	    "argP2": "0",
+	    "scenario": "min"
+        },
+	"Venus-Mercury Gravity Assist": {
+            "type": 0,
+            "DV": 250,
+	    "margin": "+50"
+        },
+	"Mercury Capture": {
+            "type": 3,
+            "b1": "Sun",
+	    "A1": "4000000000",
+	    "P1": "2310000000",
+	    "argP1": "29",
+            "b2": "Mercury",
+            "A2": "LO",
+            "P2": "LO",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "min"
+        },
+	"Mercury Escape": {
+            "type": 2,
+            "b1": "Mercury",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Sun",
+	    "A2": "3500000000",
+	    "P2": "2310000000",
+	    "argP2": "29",
+	    "scenario": "min"
+        },
+	"Mercury-Mars Gravity Assist": {
+            "type": 0,
+            "DV": 250,
+	    "margin": "+80"
+        },
+        "Post-Martian Aerocapture Correction": {
+            "type": 1,
+            "b": "Mars",
+            "A1": "LO",
+            "A21": "0h",
+            "A22": "LO",
+	    "margin": "+10"
+        },
+        "Mars LO to Phobos": {
+            "type": 4,
+            "b1": "Mars",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Phobos",
+            "A2": "LO",
+            "P2": "LO",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "min"
+        },
+	"Phobos to Deimos": {
+            "type": 4,
+            "b1": "Phobos",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Deimos",
+            "A2": "LO",
+            "P2": "LO",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "min"
+        },
+	"Deimos to Mars LO": {
+            "type": 2,
+            "b1": "Deimos",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Mars",
+	    "A2": "LO",
+	    "P2": "LO",
+	    "argP2": "0",
+	    "scenario": "min"
+        },
+        "Mars to Earth-Moon Aerobrake": {
+            "type": 2,
+            "b1": "Mars",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Earth",
+            "A2": "11200000",
+            "P2": "LO",
+            "argP2": "0",
+	    "scenario": "max"
+        },
+        "Earth-Moon Correction": {
+            "type": 1,
+            "b": "Earth",
+            "A1": "12200000",
+            "A21": "0h",
+            "A22": "LO",
+	    "margin": "1"
+	},
+        "Moon Capture": {
+            "type": 3,
+            "b1": "Earth",
+	    "A1": "11200000",
+	    "P1": "LO",
+	    "argP1": "0",
+            "b2": "Moon",
+            "A2": "LO",
+            "P2": "LO",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "min"
+        },
+        "Moon to Asteroid": {
+            "type": 4,
+            "b1": "Moon",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Near_Earth_Asteroid",
+            "A2": "LO",
+            "P2": "LO",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "min"
+        },
+        "Asteroid to Earth": {
+            "type": 2,
+            "b1": "Near_Earth_Asteroid",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Earth",
+	    "A2": "50964000",
+	    "P2": "LO",
+	    "argP2": "0",
+	    "scenario": "min"
+        }
+    }
+}

@@ -1,0 +1,86 @@
+{
+    "maneuver_default": {
+        "maneuver_type0": {
+            "type": 0,
+            "DV": 100,
+	    "margin": "1"
+        },
+        "maneuver_type1_justburn": {
+            "type": 1,
+            "b": "body1",
+            "A1": "LO/100/100h",
+            "A21": "LO/100/100h",
+            "A22": "LO/100/100h",
+            "margin": "1"
+        },
+        "maneuver_type2_escape2flyby": {
+            "type": 2,
+            "b1": "body1",
+            "A1": "LO/100/100h",
+            "P1": "LO/100/100h",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "body2",
+	    "A2": "LO/100/100h",
+	    "P2": "LO/100/100h",
+	    "argP2": "0",
+	    "scenario": "max/min"
+        },
+        "maneuver_type3_flyby2capture": {
+            "type": 3,
+            "b1": "body1",
+	    "A1": "LO/100/100h",
+	    "P1": "LO/100/100h",
+	    "argP1": "0",
+            "b2": "body2",
+            "A2": "LO/100/100h",
+            "P2": "LO/100/100h",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "max/min"
+        },
+        "maneuver_type4_fullhohmann": {
+            "type": 4,
+            "b1": "body1",
+            "A1": "LO/100/100h",
+            "P1": "LO/100/100h",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "body2",
+            "A2": "LO/100/100h",
+            "P2": "LO/100/100h",
+            "argP2": "0",
+	    "margin2": "1",
+	    "scenario": "max/min"
+        }
+    },
+    "maneuver":{
+        "Earth to Venus Flyby":{
+            "type": 2,
+            "b1": "Earth",
+            "A1": "LO",
+            "P1": "LO",
+            "argP1": "0",
+	    "margin1": "+200",
+            "b2": "Venus",
+	    "A2": "LO",
+	    "P2": "LO",
+	    "argP2": "0",
+	    "scenario": "min"
+        },
+        "Earth to Earth test": {
+            "type": 4,
+            "b1": "Earth",
+            "A1": "5000000",
+            "P1": "5000000",
+            "argP1": "0",
+	    "margin1": "1",
+            "b2": "Earth",
+            "A2": "5000000h",
+            "P2": "5000000h",
+            "argP2": "0",
+	    "margin2": "5",
+	    "scenario": "min"
+        }
+    }
+}
