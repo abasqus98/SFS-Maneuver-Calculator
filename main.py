@@ -3,14 +3,28 @@ from math import acos as acos
 from math import sqrt as sqrt
 from math import pi as pi
 import json
-import numpy as np
 import matplotlib.pyplot as plt
 import os
+
+################################################
+##########  SFS MANEUVER CALCULATOR   ##########
+################################################
 
 from dotenv import dotenv_values
 paths=dotenv_values('.env')
 maneuver_path=paths['path_maneuver']
 planet_pack_path=paths['path_planetpack']
+
+'''
+If you want to paste the path directly:
+maneuver_path=\path\to\your\maneuver.txt
+planet_pack_path=\path\to\your\planetpack
+'''
+
+################################################
+################################################
+################################################
+
 planet_pack_path=planet_pack_path+'\\Planet Data'
 
 deg2rad=pi/180
@@ -96,7 +110,6 @@ def getorbit(A,P,argPd,parent,ref):
     e=((A-P)/sma)/2
     argPd=float(argPd)*deg2rad
     return orbit(sma,e,argPd,parent)
-
 class orbit:
     def __init__(self,a,e,argP,parent):
         self.a=a
@@ -135,7 +148,6 @@ def getRkmh(r,ref):
 def marg(dv,f):
     if '+' in f: return dv+float(f[+1:])
     else: return dv*float(f)
-
 
 def HohmannCalc(orbit1, orbit2, argstart,hohmann,argend):
     #Credits to Altair
@@ -199,7 +211,6 @@ def HohmannCalc(orbit1, orbit2, argstart,hohmann,argend):
         argend=(phi2+sign2*acos(cosval2))%(2*pi)
     return [hohmann,argend]
 
-
 def calculationType(body1,body2,manType):
     #criterion mess up 2025 03 31
     manType=manType*100
@@ -249,7 +260,6 @@ def calculationType(body1,body2,manType):
          body[body1]['parent']!=body[body2]['parent']:
         print('Transfer Type 12: Moon to another planet''s moon')
         return 12+manType #mm''
-
 
 def WorstBestDV(maneuv,calcType):
 
@@ -436,7 +446,6 @@ def WorstBestDV(maneuv,calcType):
             print('\terror:', str(err))
         return totaldVlist[idx]
 
-
 def transferDVcalc(orbit1, orbit2, hohmann, argstart, argend, deptorbit, destorbit, \
                    calcType, scena):
 
@@ -614,6 +623,86 @@ def transferDVcalc(orbit1, orbit2, hohmann, argstart, argend, deptorbit, destorb
         print(' Total DV: %.3f,' %(VP11LO+VP22LO))
         return [VP11LO,VP22LO]
 
+def ManeuverCalc(trip):
+    step=1
+    totalDVlist=[]
+    for i in trip:
+        print('Maneuver #%d: %s' %(step,i))
+        man=trip[i]
+        if man['type']==0: #correction burn
+
+            print('Quick Burn')
+            print('DV: %.3f' %man['DV'])
+            print('Margin: %s' %man['margin'])
+            print('totalDV: %.3f\n' %marg(man['DV'],man['margin']))
+            totalDVlist.append([marg(man['DV'],man['margin'])])
+
+        elif man['type']==1: #change apo/peri burn
+
+            print('Apsis increase / decrease')
+            print('Start: '+man['b']+' '+\
+                getRkmh(man['A1'],body[man['b']])+' km height x '+\
+                getRkmh(man['A21'],body[man['b']])+' km height')
+            print('End: '+man['b']+' '+\
+                getRkmh(man['A1'],body[man['b']])+' km height x '+\
+                getRkmh(man['A22'],body[man['b']])+' km height')
+            orbit1=getorbit(man['A1'],man['A21'],0,man['b'],body[man['b']])
+            orbit2=getorbit(man['A1'],man['A22'],0,man['b'],body[man['b']])
+            DV=abs(orbit1.getVbyR(orbit1.getA(),body[man['b']]['GM'])-\
+                orbit2.getVbyR(orbit2.getA(),body[man['b']]['GM']))
+
+            print('DV: %.3f' %DV)
+            print('Margin: %s' %man['margin'])
+            print('totalDV: %.3f\n' %marg(DV,man['margin']))
+            totalDVlist.append([marg(DV,man['margin'])])
+
+        elif man['type'] in [2,3,4]:
+            calcType=calculationType(man['b1'],man['b2'],man['type'])
+            totaldv=WorstBestDV(man,calcType)
+            totaldvsum=sum(totaldv)
+
+            print('Burn 1: %.3f, Burn 2: %.3f, total DV: %.3f' \
+                %(totaldv[0],totaldv[1],totaldvsum))
+
+            burn1marg=0; burn2marg=0
+            if man['type'] in [2,4]:
+                burn1marg=marg(totaldv[0],man['margin1'])
+            if man['type'] in [3,4]:
+                burn2marg=marg(totaldv[1],man['margin2'])
+
+            totaldvsummarg=burn1marg+burn2marg
+
+            if man['type'] == 2:
+                print('Margin 1: %s' %(man['margin1']))
+            elif man['type'] == 3:
+                print('\t\tMargin 2: %s' %(man['margin2']))
+            elif man['type'] == 4:
+                print('Margin 1: %s\tMargin 2: %s' %(man['margin1'],man['margin2']))
+
+            print('Burn 1: %.3f, Burn 2: %.3f, total DV: %.3f\n' \
+                %(burn1marg,burn2marg,totaldvsummarg))
+            totalDVlist.append([burn1marg,burn2marg,totaldvsummarg])
+        print(70*'#')
+        print(70*'#'+'\n')
+        step+=1
+    return totalDVlist
+
+def Summarizer(totalDVlist,trip):
+    step=0
+    ultDV=0
+    print('Summary\n')
+    for i in trip:
+        print('Maneuver #%d: %s' %(step+1,i))
+        if len(totalDVlist[step])==1:
+            print('\t\tDV: %.3f m/s\n' %totalDVlist[step][0])
+            ultDV=ultDV+totalDVlist[step][0]
+        elif len(totalDVlist[step])==3:
+            print('\t\tBurn 1: %.3f m/s' %totalDVlist[step][0])
+            print('\t\tBurn 2: %.3f m/s' %totalDVlist[step][1])
+            print('\t\tDV: %.3f m/s\n' %totalDVlist[step][2])
+            ultDV=ultDV+totalDVlist[step][2]
+        step+=1
+    print('Total DV: %.3f m/s' %ultDV)
 
 with open(maneuver_path,'r+') as f:
     trip=json.load(f)
@@ -621,80 +710,5 @@ with open(maneuver_path,'r+') as f:
 
 body=planet_data_miner(planet_pack_path)
 
-step=1
-totalDVlist=[]
-for i in trip:
-    print('Maneuver #%d: %s' %(step,i))
-    man=trip[i]
-    if man['type']==0: #correction burn
-
-        print('Quick Burn')
-        print('DV: %.3f' %man['DV'])
-        print('Margin: %s' %man['margin'])
-        print('totalDV: %.3f\n' %marg(man['DV'],man['margin']))
-        totalDVlist.append([marg(man['DV'],man['margin'])])
-
-    elif man['type']==1: #change apo/peri burn
-
-        print('Apsis increase / decrease')
-        print('Start: '+man['b']+' '+\
-              getRkmh(man['A1'],body[man['b']])+' km height x '+\
-              getRkmh(man['A21'],body[man['b']])+' km height')
-        print('End: '+man['b']+' '+\
-              getRkmh(man['A1'],body[man['b']])+' km height x '+\
-              getRkmh(man['A22'],body[man['b']])+' km height')
-        orbit1=getorbit(man['A1'],man['A21'],0,man['b'],body[man['b']])
-        orbit2=getorbit(man['A1'],man['A22'],0,man['b'],body[man['b']])
-        DV=abs(orbit1.getVbyR(orbit1.getA(),body[man['b']]['GM'])-\
-            orbit2.getVbyR(orbit2.getA(),body[man['b']]['GM']))
-
-        print('DV: %.3f' %DV)
-        print('Margin: %s' %man['margin'])
-        print('totalDV: %.3f\n' %marg(DV,man['margin']))
-        totalDVlist.append([marg(DV,man['margin'])])
-
-    elif man['type'] in [2,3,4]:
-        calcType=calculationType(man['b1'],man['b2'],man['type'])
-        totaldv=WorstBestDV(man,calcType)
-        totaldvsum=sum(totaldv)
-
-        print('Burn 1: %.3f, Burn 2: %.3f, total DV: %.3f' \
-              %(totaldv[0],totaldv[1],totaldvsum))
-
-        burn1marg=0; burn2marg=0
-        if man['type'] in [2,4]:
-            burn1marg=marg(totaldv[0],man['margin1'])
-        if man['type'] in [3,4]:
-            burn2marg=marg(totaldv[1],man['margin2'])
-
-        totaldvsummarg=burn1marg+burn2marg
-
-        if man['type'] == 2:
-            print('Margin 1: %s' %(man['margin1']))
-        elif man['type'] == 3:
-            print('\t\tMargin 2: %s' %(man['margin2']))
-        elif man['type'] == 4:
-            print('Margin 1: %s\tMargin 2: %s' %(man['margin1'],man['margin2']))
-
-        print('Burn 1: %.3f, Burn 2: %.3f, total DV: %.3f\n' \
-              %(burn1marg,burn2marg,totaldvsummarg))
-        totalDVlist.append([burn1marg,burn2marg,totaldvsummarg])
-    print(70*'#')
-    print(70*'#'+'\n')
-    step+=1
-
-step=0
-ultDV=0
-print('Summary\n')
-for i in trip:
-    print('Maneuver #%d: %s' %(step+1,i))
-    if len(totalDVlist[step])==1:
-        print('\t\tDV: %.3f m/s\n' %totalDVlist[step][0])
-        ultDV=ultDV+totalDVlist[step][0]
-    elif len(totalDVlist[step])==3:
-        print('\t\tBurn 1: %.3f m/s' %totalDVlist[step][0])
-        print('\t\tBurn 2: %.3f m/s' %totalDVlist[step][1])
-        print('\t\tDV: %.3f m/s\n' %totalDVlist[step][2])
-        ultDV=ultDV+totalDVlist[step][2]
-    step+=1
-print('Total DV: %.3f m/s' %ultDV)
+totalDVlist=ManeuverCalc(trip)
+Summarizer(totalDVlist,trip)
