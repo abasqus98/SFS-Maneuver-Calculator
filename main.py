@@ -261,7 +261,7 @@ def calculationType(body1,body2,manType):
         print('Transfer Type 12: Moon to another planet''s moon')
         return 12+manType #mm''
 
-def WorstBestDV(maneuv,calcType):
+def WorstBestDV(maneuv,calcType,ifplot=False):
 
     body1=maneuv['b1']
     body2=maneuv['b2']
@@ -351,6 +351,17 @@ def WorstBestDV(maneuv,calcType):
             hohmannTrf=ok[0]; argend=ok[1]
             totaldV=transferDVcalc(orbit1,orbit2,hohmannTrf,argstart,argend,\
                                    ship1orbit,ship2orbit,calcType,scena)
+            if ifplot:
+                theta=list(map(lambda x:x/180*pi,range(0,360,1)))
+                rorb1=[orbit1.getRtheta(i) for i in theta]
+                rorb2=[orbit2.getRtheta(i) for i in theta]
+                rorb3=[hohmannTrf.getRtheta(i) for i in theta]
+                fig,ax=plt.subplots(subplot_kw={'projection': 'polar'})
+                ax.plot(theta,rorb1,'.')
+                ax.plot(theta,rorb2,'.')
+                ax.plot(theta,rorb3)
+                ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.show()
             return totaldV
         else:
             return 'Calculation Failed'
@@ -388,15 +399,58 @@ def WorstBestDV(maneuv,calcType):
                 else: return totaldV1
                 #return min(totaldV1,totaldV2)
 
+            if ifplot:
+                theta=list(map(lambda x:x/180*pi,range(0,360,1)))
+                rorb1=[orbit1.getRtheta(i) for i in theta]
+                rorb2=[orbit2.getRtheta(i) for i in theta]
+                rorb3=[hohmannTrf1.getRtheta(i) for i in theta]
+                rorb4=[hohmannTrf2.getRtheta(i) for i in theta]
+                fig,ax=plt.subplots(subplot_kw={'projection': 'polar'})
+                ax.plot(theta,rorb1,'.')
+                ax.plot(theta,rorb2,'.')
+                ax.plot(theta,rorb3)
+                ax.plot(theta,rorb4)
+                ax.legend(['Origin','Destination',
+                           'Transfer1',
+                           'Transfer2'],
+                           loc='upper right')
+                plt.show()
+
         elif ok1 != False and ok2 ==False:
             hohmannTrf=ok1[0]; argend=ok1[1]
             totaldV=transferDVcalc(orbit1,orbit2,hohmannTrf,argstart,argend,\
                                    ship1orbit,ship2orbit,calcType,scena)
+            if ifplot:
+                theta=list(map(lambda x:x/180*pi,range(0,360,1)))
+                rorb1=[orbit1.getRtheta(i) for i in theta]
+                rorb2=[orbit2.getRtheta(i) for i in theta]
+                rorb3=[hohmannTrf.getRtheta(i) for i in theta]
+                fig,ax=plt.subplots(subplot_kw={'projection': 'polar'})
+                ax.plot(theta,rorb1,'.')
+                ax.plot(theta,rorb2,'.')
+                ax.plot(theta,rorb3)
+                ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.show()
+
+
             return totaldV
         elif ok1 == False and ok2 !=False:
             hohmannTrf=ok2[0]; argend=ok2[1]
             totaldV=transferDVcalc(orbit1,orbit2,hohmannTrf,argstart,argend,\
                                    ship1orbit,ship2orbit,calcType,scena)
+
+            if ifplot:
+                theta=list(map(lambda x:x/180*pi,range(0,360,1)))
+                rorb1=[orbit1.getRtheta(i) for i in theta]
+                rorb2=[orbit2.getRtheta(i) for i in theta]
+                rorb3=[hohmannTrf.getRtheta(i) for i in theta]
+                fig,ax=plt.subplots(subplot_kw={'projection': 'polar'})
+                ax.plot(theta,rorb1,'.')
+                ax.plot(theta,rorb2,'.')
+                ax.plot(theta,rorb3)
+                ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.show()
+
             return totaldV
         else:
             return 'Calculation Failed'
@@ -414,7 +468,17 @@ def WorstBestDV(maneuv,calcType):
             argstart.append(inid*deg2rad+i*(find-inid)*deg2rad/(div-1))
 
         minmax=0
+
         while err<1-errlim or err>1+errlim:
+            if ifplot:
+                theta=list(map(lambda x:x/180*pi,range(0,360,1)))
+                rorb1=[orbit1.getRtheta(i) for i in theta]
+                rorb2=[orbit2.getRtheta(i) for i in theta]
+                rorb3=[]
+                fig,ax=plt.subplots(subplot_kw={'projection': 'polar'})
+                ax.plot(theta,rorb1,'.')
+                ax.plot(theta,rorb2,'.')
+
             totaldVlist=[]
             totaldVsum=[]
             step=0
@@ -428,6 +492,17 @@ def WorstBestDV(maneuv,calcType):
                                            ship1orbit,ship2orbit,calcType,scena))
                     totaldVsum.append(sum(totaldVlist[step]))
                     step+=1
+
+                if ifplot:
+                    rorb3.append([hohmannTrf.getRtheta(j) for j in theta])
+                    ax.plot(theta,rorb3[step-1])
+
+
+
+            if ifplot:
+                ax.legend(['Origin','Destination'],loc='upper right')
+                plt.show()
+
             if scena=='max':
                 idx=totaldVsum.index(max(totaldVsum))
             elif scena=='min':
@@ -623,7 +698,7 @@ def transferDVcalc(orbit1, orbit2, hohmann, argstart, argend, deptorbit, destorb
         print(' Total DV: %.3f,' %(VP11LO+VP22LO))
         return [VP11LO,VP22LO]
 
-def ManeuverCalc(trip):
+def ManeuverCalc(trip,ifplot):
     step=1
     totalDVlist=[]
     for i in trip:
@@ -658,7 +733,7 @@ def ManeuverCalc(trip):
 
         elif man['type'] in [2,3,4]:
             calcType=calculationType(man['b1'],man['b2'],man['type'])
-            totaldv=WorstBestDV(man,calcType)
+            totaldv=WorstBestDV(man,calcType,ifplot)
             totaldvsum=sum(totaldv)
 
             print('Burn 1: %.3f, Burn 2: %.3f, total DV: %.3f' \
@@ -710,5 +785,5 @@ with open(maneuver_path,'r+') as f:
 
 body=planet_data_miner(planet_pack_path)
 
-totalDVlist=ManeuverCalc(trip)
+totalDVlist=ManeuverCalc(trip,True)
 Summarizer(totalDVlist,trip)
