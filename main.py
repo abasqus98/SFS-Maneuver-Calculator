@@ -14,7 +14,7 @@ from dotenv import dotenv_values
 paths=dotenv_values('.env')
 maneuver_path=paths['path_maneuver']
 planet_pack_path=paths['path_planetpack']
-
+plot_maneuver=True
 '''
 If you want to paste the path directly:
 maneuver_path=\path\to\your\maneuver.txt
@@ -361,6 +361,7 @@ def WorstBestDV(maneuv,calcType,ifplot=False):
                 ax.plot(theta,rorb2,'.')
                 ax.plot(theta,rorb3)
                 ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.title('Maneuver from '+maneuv['b1']+' to '+maneuv['b2'])
                 plt.show()
             return totaldV
         else:
@@ -414,6 +415,7 @@ def WorstBestDV(maneuv,calcType,ifplot=False):
                            'Transfer1',
                            'Transfer2'],
                            loc='upper right')
+                plt.title('Maneuver from '+maneuv['b1']+' to '+maneuv['b2'])
                 plt.show()
 
         elif ok1 != False and ok2 ==False:
@@ -430,6 +432,7 @@ def WorstBestDV(maneuv,calcType,ifplot=False):
                 ax.plot(theta,rorb2,'.')
                 ax.plot(theta,rorb3)
                 ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.title('Maneuver from '+maneuv['b1']+' to '+maneuv['b2'])
                 plt.show()
 
 
@@ -449,6 +452,7 @@ def WorstBestDV(maneuv,calcType,ifplot=False):
                 ax.plot(theta,rorb2,'.')
                 ax.plot(theta,rorb3)
                 ax.legend(['Origin','Destination','Transfer'],loc='upper right')
+                plt.title('Maneuver from '+maneuv['b1']+' to '+maneuv['b2'])
                 plt.show()
 
             return totaldV
@@ -501,6 +505,7 @@ def WorstBestDV(maneuv,calcType,ifplot=False):
 
             if ifplot:
                 ax.legend(['Origin','Destination'],loc='upper right')
+                plt.title('Maneuver from '+maneuv['b1']+' to '+maneuv['b2'])
                 plt.show()
 
             if scena=='max':
@@ -785,5 +790,5 @@ with open(maneuver_path,'r+') as f:
 
 body=planet_data_miner(planet_pack_path)
 
-totalDVlist=ManeuverCalc(trip,True)
+totalDVlist=ManeuverCalc(trip,plot_maneuver)
 Summarizer(totalDVlist,trip)
