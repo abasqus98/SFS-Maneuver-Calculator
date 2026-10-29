@@ -34,9 +34,11 @@ Set plot_maneuver to True if one wants to see the plot of the trajectory.
         -  margin
 
             For apsides, the format is either "LO", "####", "###h". Numbers must be in meters.
-            LO is low orbit, set at 2km above minimum timewarp speed height
-            "####" is distance from the center of the celestial body
-            "####h" is the height from the surface of the celestial body.
+            LO is low orbit, set at 2km above minimum timewarp speed height.
+            
+"####" is distance from the center of the celestial body.
+            
+"####h" is the height from the surface of the celestial body.
     - Type 2
 
       This maneuver only calculates ΔV of an escape maneuver. Typically for planning a flyby.
