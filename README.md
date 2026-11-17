@@ -47,7 +47,7 @@ A Python script to calculate the ΔV of a set of maneuvers. There are two setups
         -  A22     : Final opposite apsis
         -  margin
         ```
-        For apsides, the format is either "LO", "####", "###h". Numbers must be in meters. LO is low orbit, set at 2 km above minimum timewarp speed height. "####" is distance from the center of the celestial body. "####h" is the height from the surface of the celestial body. For example, in Normal Mode at Earth, LO is 32 km in game value, 500000 is around 185,9 km in game value (500000 - Earth Radius), and 50000h is 50 km in game value.
+        For apsides, the format is either "LO", "####", "####h". Numbers must be in meters. LO is low orbit, set at 2 km above minimum timewarp height. "####" is distance from the center of the celestial body. "####h" is the height from the surface of the celestial body. For example, in Normal Mode at Earth, LO is 32 km in game value, 500000 is around 185,9 km in game value (500000 - Earth Radius), and 50000h is 50 km in game value.
     - Type 2
       
       This maneuver only calculates ΔV of an escape maneuver. Typically for planning a flyby.
@@ -141,7 +141,7 @@ After both is set up, hit run on `main.py` and the script will print out the cal
 ## Limitations:
 1.  Limited to up to 3 level planet systems: central body (level 1), orbiting central body (level 2), orbiting level 2 (level 3).
 2.  The script does not compute when to do the maneuver. It is assumed the planet positions are already aligned.
-3.  As for now, in the case of calculation between a higher level body and a lower level body, for example from Sun orbit to Mercury capture, if the Sun orbit and Mercury orbit crosses, there are possibility where the calculation could go wrong.
+3.  As for now, in the case of calculation where initial and final orbit are crossing, a solution involving hyperbolic orbit can be picked as the candidate. This will happen if the scenario is set to 'max', and the resulting ΔV of the maneuver can dwarf other maneuvers, inflating the ΔV budget. In such condition, it is preferred to set the scenario to 'min' and then adjust the margin.
 
 ## Examples
 Example process print out:
